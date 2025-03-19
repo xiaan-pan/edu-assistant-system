@@ -1,0 +1,667 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "edu-assistant-system",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Lesson"
+    }
+  ],
+  "paths": {
+    "/lesson/getLessonList": {
+      "post": {
+        "summary": "getLessonList",
+        "x-apifox-folder": "Lesson",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Lesson"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommonTablePageParam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "title": "接口状态码",
+                      "description": "接口状态码"
+                    },
+                    "message": {
+                      "type": "string",
+                      "title": "返回信息"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number",
+                          "title": "总数",
+                          "description": "总数"
+                        },
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Lesson"
+                          }
+                        }
+                      },
+                      "x-apifox-orders": ["total", "list"],
+                      "required": ["total", "list"],
+                      "title": "数据",
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": ["code", "message", "data"],
+                  "required": ["code", "data", "message"],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "data": {
+                        "total": 89,
+                        "list": [
+                          {
+                            "id": 4,
+                            "name": "快证转族长量义",
+                            "description": "其群通转应县题确化来例战从除说。书众军温同查节被率多号争照本象今精。知回音都米造片集研消公时离。采看速求究行示积为使太素方天。四处然酸制按流气几议采起石。按火安本党统现门声动约际那收。状号织内只府指公府须层感把象认那验。",
+                            "owner": "44448141"
+                          },
+                          {
+                            "id": 5,
+                            "name": "线南毛酸",
+                            "description": "于元据代共导委意式常据感化一。战题县整般生完细特己矿务认。造府八基子时道期着红题保断。",
+                            "owner": "232381"
+                          }
+                        ]
+                      },
+                      "message": "查询成功"
+                    }
+                  },
+                  "2": {
+                    "summary": "异常示例",
+                    "value": {
+                      "code": 1,
+                      "data": {
+                        "total": 0,
+                        "list": []
+                      },
+                      "message": "查询异常"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/999144/apis/api-249555724-run"
+      }
+    },
+    "/lesson/addLesson": {
+      "post": {
+        "summary": "addLesson",
+        "x-apifox-folder": "Lesson",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Lesson"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "课堂名称"
+                  },
+                  "description": {
+                    "type": "string",
+                    "title": "描述"
+                  }
+                },
+                "x-apifox-orders": ["01JGDQ17AYXRHQZQ9SKPVJ3FS7"],
+                "required": ["name", "description"],
+                "x-apifox-refs": {
+                  "01JGDQ17AYXRHQZQ9SKPVJ3FS7": {
+                    "$ref": "#/components/schemas/Lesson"
+                  }
+                },
+                "x-apifox-ignore-properties": ["name", "description"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["code", "message"],
+                  "x-apifox-orders": ["code", "message"],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "message": "添加成功"
+                    }
+                  },
+                  "2": {
+                    "summary": "异常示例",
+                    "value": {
+                      "code": 1,
+                      "message": "添加失败"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/999144/apis/api-250150163-run"
+      }
+    },
+    "/lesson/delLesson": {
+      "post": {
+        "summary": "delLesson",
+        "x-apifox-folder": "Lesson",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Lesson"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "title": "课堂id"
+                  }
+                },
+                "x-apifox-orders": ["id"],
+                "required": ["id"],
+                "x-apifox-ignore-properties": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponse"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "message": "删除成功"
+                    }
+                  },
+                  "2": {
+                    "summary": "异常示例",
+                    "value": {
+                      "code": 1,
+                      "message": "删除失败"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/999144/apis/api-250281644-run"
+      }
+    },
+    "/lesson/updateLesson": {
+      "post": {
+        "summary": "updateLesson",
+        "x-apifox-folder": "Lesson",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Lesson"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-apifox-refs": {
+                  "01JGEC97S33CT565P1EYCGKFTP": {
+                    "$ref": "#/components/schemas/Lesson"
+                  }
+                },
+                "x-apifox-orders": ["01JGEC97S33CT565P1EYCGKFTP"],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "title": "id"
+                  },
+                  "name": {
+                    "type": "string",
+                    "title": "课堂名称"
+                  },
+                  "description": {
+                    "type": "string",
+                    "title": "描述"
+                  }
+                },
+                "required": ["id", "name", "description"],
+                "x-apifox-ignore-properties": ["id", "name", "description"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/999144/apis/api-250282268-run"
+      }
+    },
+    "/lesson/ggetLessonDetail": {
+      "post": {
+        "summary": "getLessonDetail",
+        "x-apifox-folder": "Lesson",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Lesson"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "title": "id"
+                  }
+                },
+                "x-apifox-orders": ["id"],
+                "required": ["id"],
+                "x-apifox-ignore-properties": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "x-apifox-refs": {
+                    "01JGP6S40Q98QAK7CAHK0BHN92": {
+                      "$ref": "#/components/schemas/Lesson"
+                    }
+                  },
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "title": "id"
+                    },
+                    "name": {
+                      "type": "string",
+                      "title": "课堂名称"
+                    },
+                    "description": {
+                      "type": "string",
+                      "title": "描述"
+                    },
+                    "owner": {
+                      "type": "string",
+                      "title": "创建人",
+                      "description": "用户名"
+                    },
+                    "classMemberList": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ClassMembers"
+                      }
+                    }
+                  },
+                  "required": [
+                    "classMemberList",
+                    "id",
+                    "name",
+                    "description",
+                    "owner"
+                  ],
+                  "x-apifox-orders": [
+                    "01JGP6S40Q98QAK7CAHK0BHN92",
+                    "classMemberList"
+                  ],
+                  "x-apifox-ignore-properties": [
+                    "id",
+                    "name",
+                    "description",
+                    "owner"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/999144/apis/api-251189962-run"
+      }
+    },
+    "/lesson/addLessonMembers": {
+      "post": {
+        "summary": "addLessonMembers",
+        "x-apifox-folder": "Lesson",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Lesson"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "title": "课堂id"
+                  },
+                  "memberList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "x-apifox-refs": {
+                        "01JGP7MBKS2HMPVVZ9X5HSVRQV": {
+                          "$ref": "#/components/schemas/ClassMembers"
+                        }
+                      },
+                      "x-apifox-orders": ["01JGP7MBKS2HMPVVZ9X5HSVRQV"],
+                      "properties": {
+                        "memberNo": {
+                          "type": "string",
+                          "title": "成员（username）"
+                        }
+                      },
+                      "required": ["memberNo"],
+                      "x-apifox-ignore-properties": ["memberNo"]
+                    }
+                  }
+                },
+                "x-apifox-orders": ["id", "memberList"],
+                "x-apifox-refs": {},
+                "required": ["id", "memberList"],
+                "x-apifox-ignore-properties": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["code", "message"],
+                  "x-apifox-orders": ["code", "message"],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "message": "添加成功"
+                    }
+                  },
+                  "2": {
+                    "summary": "异常示例",
+                    "value": {
+                      "code": 1,
+                      "message": "添加失败"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/999144/apis/api-251190247-run"
+      }
+    },
+    "/lesson/delLessonMembers": {
+      "post": {
+        "summary": "delLessonMembers",
+        "x-apifox-folder": "Lesson",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Lesson"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "title": "课堂id"
+                  },
+                  "memberList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "x-apifox-refs": {
+                        "01JGP7MBKS2HMPVVZ9X5HSVRQV": {
+                          "$ref": "#/components/schemas/ClassMembers"
+                        }
+                      },
+                      "x-apifox-orders": ["01JGP7MBKS2HMPVVZ9X5HSVRQV"],
+                      "properties": {
+                        "memberNo": {
+                          "type": "string",
+                          "title": "成员（username）"
+                        }
+                      },
+                      "required": ["memberNo"],
+                      "x-apifox-ignore-properties": ["memberNo"]
+                    }
+                  }
+                },
+                "x-apifox-orders": ["id", "memberList"],
+                "x-apifox-refs": {},
+                "required": ["id", "memberList"],
+                "x-apifox-ignore-properties": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["code", "message"],
+                  "x-apifox-orders": ["code", "message"],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "message": "删除成功"
+                    }
+                  },
+                  "2": {
+                    "summary": "异常示例",
+                    "value": {
+                      "code": 1,
+                      "message": "添加失败"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/999144/apis/api-251190940-run"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClassMembers": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "id"
+          },
+          "lessonId": {
+            "type": "integer",
+            "title": "课堂id"
+          },
+          "memberNo": {
+            "type": "string",
+            "title": "成员（username）"
+          }
+        },
+        "title": "课堂成员表",
+        "x-apifox-orders": ["id", "lessonId", "memberNo"],
+        "required": ["id", "lessonId", "memberNo"],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "CommonResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-apifox-orders": ["code", "message"],
+        "required": ["code", "message"],
+        "title": "通用响应结果",
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "请求相关"
+      },
+      "Lesson": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "id"
+          },
+          "name": {
+            "type": "string",
+            "title": "课堂名称"
+          },
+          "description": {
+            "type": "string",
+            "title": "描述"
+          },
+          "owner": {
+            "type": "string",
+            "title": "创建人",
+            "description": "用户名"
+          }
+        },
+        "title": "课堂表",
+        "x-apifox-orders": ["id", "name", "description", "owner"],
+        "required": ["id", "name", "description", "owner"],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "CommonTablePageParam": {
+        "type": "object",
+        "properties": {
+          "current": {
+            "type": "integer",
+            "title": "当前页"
+          },
+          "pageSize": {
+            "type": "integer",
+            "title": "每页多少条"
+          }
+        },
+        "x-apifox-orders": ["current", "pageSize"],
+        "required": ["current", "pageSize"],
+        "title": "表格分页通用请求参数",
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "请求相关"
+      }
+    }
+  },
+  "servers": []
+}
