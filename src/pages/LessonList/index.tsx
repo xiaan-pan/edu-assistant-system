@@ -31,6 +31,7 @@ const TableList: React.FC<unknown> = () => {
         {
             title: '课堂名称',
             dataIndex: 'name',
+            width: 140,
             formItemProps: {
                 rules: [
                     {

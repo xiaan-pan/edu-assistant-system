@@ -1,27 +1,21 @@
-import services from '@/services/lessonApi';
 import {
-    ActionType,
     FormListActionType,
     PageContainer,
-    ProDescriptionsItemProps,
+    ProCard,
     ProForm,
     ProFormInstance,
     ProFormList,
     ProFormText,
-    ProFormTextArea,
-    ProTable,
+    ProFormTextArea
 } from '@ant-design/pro-components';
-import { Button, Divider, message, Modal } from 'antd';
+import { message, Modal } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { isSuccessResponse, noop } from '@/utils';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-import { useParams } from '@umijs/max';
-import { postAddLearningTask, postGetLearningTaskDetail, postUpdateLearningTask } from '@/services/learningTaskApi/learningTaskApi';
+
+
+import { postAddKnowledgePointTest, postGetKnowledgePointTestDetail, postUpdateKnowledgePointTest } from '@/services/knowledgePointTestApi/knowledgePointTestApi';
 
 const { confirm } = Modal;
-
-const { postGetLessonDetail, postDelLessonMembers, postAddLessonMembers } =
-    services.lessonApi;
 
 const LearningTaskDetail: React.FC<unknown> = () => {
     const formRef = useRef<ProFormInstance>(null);
@@ -39,7 +33,7 @@ const LearningTaskDetail: React.FC<unknown> = () => {
     const actionText = isAdd ? '创建' : (isEdit ? '编辑' : '详情');
     const disabled = !isAdd && !isEdit;
     const fetchData = async () => {
-        const { data, message: msg, code } = await postGetLearningTaskDetail({
+        const { data, message: msg, code } = await postGetKnowledgePointTestDetail({
             id: Number(pageParams.get('id')),
         });
         if (isSuccessResponse(code)) {
@@ -70,17 +64,17 @@ const LearningTaskDetail: React.FC<unknown> = () => {
     return (
         <PageContainer
             header={{
-                title: `任务单${actionText}`,
+                title: `知识点测试${actionText}`,
             }}
             breadcrumb={{
                 items: [
                     {
-                        href: '/learningTaskList',
-                        title: '任务单列表'
+                        href: '/knowledgePointTestList',
+                        title: '知识点测试列表'
                     },
                     {
                         href: location.href,
-                        title: `任务单${actionText}`
+                        title: `知识点测试${actionText}`
                     }
                 ]
             }}
@@ -105,45 +99,28 @@ const LearningTaskDetail: React.FC<unknown> = () => {
                     }
                 }}
                 onFinish={async (formData: any) => {
-                    if (!formData.answerList?.length) {
-                        message.error('答案不能为空');
+                    console.log(formData);
+                    if (!formData.questionList?.length) {
+                        message.error('测试题不能为空');
                         return;
                     }
                     if (isAdd) {
-                        const { message: msg, code } = await postAddLearningTask({
-                            introduction: formData.introduction,
-                            knowledgePoint: formData.knowledgePoint,
-                            questionInfo: {
-                                question: formData.question,
-                                analyze: '',
-                                answerList: formData.answerList.map((item, index) => ({
-                                    positionIndex: index,
-                                    answer: item.answer,
-                                }))
-                            }
+                        const { message: msg, code } = await postAddKnowledgePointTest({
+                            ...formData
                         });
                         if (isSuccessResponse(code)) {
-                            message.success('任务单创建成功');
+                            message.success('知识点测试创建成功');
                             history.back();
                             return;
                         }
                         message.error(msg);
                     } else if (isEdit) {
-                        const { message: msg, code } = await postUpdateLearningTask({
+                        const { message: msg, code } = await postUpdateKnowledgePointTest({
                             id: Number(pageParams.get('id')),
-                            introduction: formData.introduction,
-                            knowledgePoint: formData.knowledgePoint,
-                            questionInfo: {
-                                question: formData.question,
-                                analyze: '',
-                                answerList: formData.answerList.map((item, index) => ({
-                                    positionIndex: index,
-                                    answer: item.answer,
-                                }))
-                            }
+                            ...formData
                         });
                         if (isSuccessResponse(code)) {
-                            message.success('任务单创建成功');
+                            message.success('知识点测试更新成功');
                             history.back();
                             return;
                         }
@@ -165,7 +142,7 @@ const LearningTaskDetail: React.FC<unknown> = () => {
                     required
                     rules={[{ required: true }]}
                 />
-                <ProFormTextArea
+                {/* <ProFormTextArea
                     name="question"
                     label="题目"
                     tooltip="填空字符串（%s 为挖空占位）"
@@ -175,23 +152,47 @@ const LearningTaskDetail: React.FC<unknown> = () => {
                     onMetaChange={(meta) => {
                         console.log('meta', meta)
                     }}
-                />
+                /> */}
                 <ProFormList
-                    name="answerList"
-                    label="答案"
+                    name="questionList"
+                    label="测试题"
                     actionRef={actionRef}
                     fieldExtraRender={() => null}
-                    creatorButtonProps={false}
-                    itemRender={({}, listData) => {
+                    creatorButtonProps={{ creatorButtonText: '新增测试题' }}
+                    itemRender={({ action }, listData) => {
                         const { record, index } = listData;
+                        console.log({ record, index })
                         return (
-                            <ProFormText
-                                name="answer"
-                                label={`答案${index + 1}`}
-                                placeholder="请输入知识点"
-                                required
-                                rules={[{ required: true }]}
-                            />
+                            <ProCard
+                                bordered
+                                style={{ marginBlockEnd: 8 }}
+                                title={`测试${index + 1}`}
+                                extra={action}
+                                bodyStyle={{ paddingBlockEnd: 0 }}
+                            >
+                                <ProFormText
+                                    name="question"
+                                    label="题目"
+                                    placeholder="请输入题目"
+                                    required
+                                    rules={[{ required: true }]}
+                                />
+                                <ProFormText
+                                    name="options"
+                                    label="答案选项"
+                                    placeholder="请输入答案选项"
+                                    tooltip="选项（_分隔）"
+                                    required
+                                    rules={[{ required: true }]}
+                                />
+                                <ProFormText
+                                    name="answer"
+                                    label="答案"
+                                    placeholder="请输入答案"
+                                    required
+                                    rules={[{ required: true }]}
+                                />
+                            </ProCard>
                         );
                     }}
                 >

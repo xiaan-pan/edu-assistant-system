@@ -11,6 +11,15 @@ export default defineConfig({
     },
     routes: [
         {
+            path: '/',
+            redirect: '/home',
+        },
+        {
+            name: '首页',
+            path: '/home',
+            component: './Home',
+        },
+        {
             name: '课堂列表',
             path: '/lessonList',
             component: './LessonList',
@@ -18,6 +27,15 @@ export default defineConfig({
         {
             path: '/lessonDetail/:id',
             component: './LessonDetail',
+        },
+        {
+            name: '课时列表',
+            path: '/classHourList',
+            component: './ClassHourList',
+        },
+        {
+            path: '/classHourDetail',
+            component: './ClassHourDetail',
         },
         {
             name: '学习任务单列表',
@@ -29,49 +47,55 @@ export default defineConfig({
             component: './LearningTaskDetail',
         },
         {
-            path: '/',
-            redirect: '/home',
+            name: '知识点测试列表',
+            path: '/knowledgePointTestList',
+            component: './KnowledgePointTestList',
         },
         {
-            name: '首页',
-            path: '/home',
-            component: './Home',
+            path: '/knowledgePointTestDetail',
+            component: './KnowledgePointTestDetail',
         },
-        {
-            name: '权限演示',
-            path: '/access',
-            component: './Access',
-        },
-        {
-            name: ' CRUD 示例',
-            path: '/table',
-            component: './Table',
-        },
+        // {
+        //     name: '权限演示',
+        //     path: '/access',
+        //     component: './Access',
+        // },
+        // {
+        //     name: ' CRUD 示例',
+        //     path: '/table',
+        //     component: './Table',
+        // },
     ],
     npmClient: 'pnpm',
     plugins: [
         '@umijs/max-plugin-openapi'
     ],
-    // openAPI: [
-    //     {
-    //         requestLibPath: "import { request } from 'umi'",
-    //         schemaPath: "http://127.0.0.1:4523/export/openapi/5?version=3.0",
-    //         projectName: 'lessonApi',
-    //         namespace: 'LessonApiInterface'
-    //     },
-    //     {
-    //         requestLibPath: "import { request } from 'umi'",
-    //         schemaPath: "http://127.0.0.1:4523/export/openapi/4?version=3.0",
-    //         projectName: 'learningTaskApi',
-    //         namespace: 'LearningTaskApiInterface'
-    //     },
-    //     {
-    //         requestLibPath: "import { request } from 'umi'",
-    //         schemaPath: "http://127.0.0.1:4523/export/openapi/6?version=3.0",
-    //         projectName: 'knowledgePointTestApi',
-    //         namespace: 'KnowledgePointTestApiInterface'
-    //     }
-    // ],
+    openAPI: [
+        // {
+        //     requestLibPath: "import { request } from 'umi'",
+        //     schemaPath: "http://127.0.0.1:4523/export/openapi/5?version=3.0",
+        //     projectName: 'lessonApi',
+        //     namespace: 'LessonApiInterface'
+        // },
+        // {
+        //     requestLibPath: "import { request } from 'umi'",
+        //     schemaPath: "http://127.0.0.1:4523/export/openapi/4?version=3.0",
+        //     projectName: 'learningTaskApi',
+        //     namespace: 'LearningTaskApiInterface'
+        // },
+        // {
+        //     requestLibPath: "import { request } from 'umi'",
+        //     schemaPath: "http://127.0.0.1:4523/export/openapi/6?version=3.0",
+        //     projectName: 'knowledgePointTestApi',
+        //     namespace: 'KnowledgePointTestApiInterface'
+        // },
+        // {
+        //     requestLibPath: "import { request } from 'umi'",
+        //     schemaPath: "http://127.0.0.1:4523/export/openapi/9?version=3.0",
+        //     projectName: 'classHoursApi',
+        //     namespace: 'ClassHoursApiInterface'
+        // },
+    ],
     proxy: {
         "/api": { // 标识需要进行转换的请求的url
          "target": "http://127.0.0.1:4523/m1/999144-0-default", // 服务端域名

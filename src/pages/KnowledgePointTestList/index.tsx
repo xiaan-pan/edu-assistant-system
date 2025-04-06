@@ -11,27 +11,16 @@ import {
 import { Button, Divider, message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import { isSuccessResponse } from '@/utils';
-import { postUpdateLesson } from '@/services/lessonApi/lessonApi';
-import { postGetLearningTaskList } from '@/services/learningTaskApi/learningTaskApi';
+import { postDelKnowledgePointTest, postGetKnowledgePointTestList } from '@/services/knowledgePointTestApi/knowledgePointTestApi';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 
 const { confirm } = Modal;
 
-const { postAddLesson, postDelLesson } =
-    services.lessonApi;
-
-enum FORM_TYPE {
-    CREATE_FORM,
-    UPDATE_FORM
-};
 
 const LearningTaskList: React.FC<unknown> = () => {
-    const [createModalVisible, handleModalVisible] = useState<boolean>(false);
     const actionRef = useRef<ActionType>(null);
-    const [formType, setFormType] = useState<FORM_TYPE>(FORM_TYPE.CREATE_FORM);
-    const [defaultFormValue, setDefaultFormValue] = useState<Partial<LessonApiInterface.Lesson>>({});
 
-    const columns: ProColumns<LearningTaskApiInterface.LearningTask>[] = [
+    const columns: ProColumns<KnowledgePointTestApiInterface.KnowledgePointTest>[] = [
         {
             title: '知识点',
             dataIndex: 'knowledgePoint',
@@ -48,11 +37,11 @@ const LearningTaskList: React.FC<unknown> = () => {
             width: 140,
             render: (_, record) => (
                 <>
-                    <a href={`/learningTaskDetail?id=${record.id}`}>
+                    <a href={`/knowledgePointTestDetail?id=${record.id}`}>
                         详情
                     </a>
                     <Divider type="vertical" />
-                    <a href={`/learningTaskDetail?id=${record.id}&isEdit=1`}>
+                    <a href={`/knowledgePointTestDetail?id=${record.id}&isEdit=1`}>
                         编辑
                     </a>
                     <Divider type="vertical" />
@@ -61,9 +50,9 @@ const LearningTaskList: React.FC<unknown> = () => {
                             confirm({
                                 title: '请确认是否删除',
                                 icon: <ExclamationCircleFilled />,
-                                content: `即将删除学习任务单：${record.knowledgePoint}`,
+                                content: `即将删除知识点测试：${record.knowledgePoint}`,
                                 onOk: async () => {
-                                    const response = await postDelLesson({
+                                    const response = await postDelKnowledgePointTest({
                                         ids: [record.id]
                                     });
                                     if (isSuccessResponse(response.code)) {
@@ -88,11 +77,11 @@ const LearningTaskList: React.FC<unknown> = () => {
     return (
         <PageContainer
             header={{
-                title: '学习任务单列表',
+                title: '知识点测试列表',
             }}
         >
             <ProTable<LearningTaskApiInterface.LearningTask>
-                headerTitle="学习任务单列表"
+                headerTitle="知识点测试列表"
                 actionRef={actionRef}
                 rowKey="id"
                 search={{
@@ -103,10 +92,7 @@ const LearningTaskList: React.FC<unknown> = () => {
                         key="1"
                         type="primary"
                         onClick={() => {
-                            location.href = '/learningTaskDetail'
-                            // setFormType(FORM_TYPE.CREATE_FORM);
-                            // setDefaultFormValue({});
-                            // handleModalVisible(true);
+                            location.href = '/knowledgePointTestDetail'
                         }}
                     >
                         新建
@@ -114,7 +100,7 @@ const LearningTaskList: React.FC<unknown> = () => {
                 ]}
                 request={async (params) => {
                     console.log('params', params)
-                    const { data, message: msg, code } = await postGetLearningTaskList(params as LearningTaskApiInterface.postGetLearningTaskListParams);
+                    const { data, message: msg, code } = await postGetKnowledgePointTestList(params as LearningTaskApiInterface.postGetLearningTaskListParams);
 
                     if (isSuccessResponse(code)) {
                         return {
@@ -135,37 +121,6 @@ const LearningTaskList: React.FC<unknown> = () => {
                     pageSize: 10
                 }}
             />
-            <Modal
-                destroyOnClose
-                title="新建"
-                width={420}
-                open={createModalVisible}
-                onCancel={() => handleModalVisible(false)}
-                footer={null}
-            >
-                <ProForm onFinish={async (e) => console.log(e)}>
-                    <ProFormText
-                        name="knowledgePoint"
-                        label="知识点"
-                        placeholder="请输入知识点"
-                        required
-                    />
-                    <ProFormTextArea
-                        name="introduction"
-                        label="引言"
-                        placeholder="请输入引言"
-                        required
-                    />
-                    <ProFormTextArea
-                        name="question"
-                        label="题目"
-                        tooltip="填空字符串（%s 为挖空占位）"
-                        placeholder="请输入题目"
-                        required
-                    />
-                    
-                </ProForm>
-            </Modal>
         </PageContainer>
     );
 };
