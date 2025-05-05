@@ -17,6 +17,7 @@ import { isSuccessResponse, noop } from '@/utils';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useParams } from '@umijs/max';
 import { postAddLearningTask, postGetLearningTaskDetail, postUpdateLearningTask } from '@/services/learningTaskApi/learningTaskApi';
+import getUser from '@/utils/getUser';
 
 const { confirm } = Modal;
 
@@ -31,6 +32,7 @@ const LearningTaskDetail: React.FC<unknown> = () => {
         }>
     >();
     const [data, setData] = useState(null);
+    const user = getUser();
 
     const urlObject = new URL(location.href);
     const pageParams = new URLSearchParams(urlObject.search);

@@ -12,8 +12,9 @@ import { Button, Divider, message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import { isSuccessResponse } from '@/utils';
 import { postUpdateLesson } from '@/services/lessonApi/lessonApi';
-import { postGetLearningTaskList } from '@/services/learningTaskApi/learningTaskApi';
+import { postDelLearningTask, postGetLearningTaskList } from '@/services/learningTaskApi/learningTaskApi';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import getUser from '@/utils/getUser';
 
 const { confirm } = Modal;
 
@@ -30,8 +31,14 @@ const LearningTaskList: React.FC<unknown> = () => {
     const actionRef = useRef<ActionType>(null);
     const [formType, setFormType] = useState<FORM_TYPE>(FORM_TYPE.CREATE_FORM);
     const [defaultFormValue, setDefaultFormValue] = useState<Partial<LessonApiInterface.Lesson>>({});
+    const user = getUser();
 
     const columns: ProColumns<LearningTaskApiInterface.LearningTask>[] = [
+        {
+            title: 'id',
+            dataIndex: 'id',
+            width: 30
+        },
         {
             title: '知识点',
             dataIndex: 'knowledgePoint',
@@ -63,7 +70,7 @@ const LearningTaskList: React.FC<unknown> = () => {
                                 icon: <ExclamationCircleFilled />,
                                 content: `即将删除学习任务单：${record.knowledgePoint}`,
                                 onOk: async () => {
-                                    const response = await postDelLesson({
+                                    const response = await postDelLearningTask({
                                         ids: [record.id]
                                     });
                                     if (isSuccessResponse(response.code)) {

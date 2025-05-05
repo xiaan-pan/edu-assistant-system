@@ -8,20 +8,29 @@ import {
     ProFormTextArea,
     ProTable,
 } from '@ant-design/pro-components';
-import { Button, Divider, message, Modal } from 'antd';
+import { Button, Divider, Dropdown, message, Modal, Space, Typography } from 'antd';
 import React, { useRef, useState } from 'react';
 import { isSuccessResponse } from '@/utils';
 import { postDelKnowledgePointTest, postGetKnowledgePointTestList } from '@/services/knowledgePointTestApi/knowledgePointTestApi';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-import { postDelClassHour, postGetClassHourList } from '@/services/classHoursApi/classHoursApi';
+import { DownOutlined, ExclamationCircleFilled } from '@ant-design/icons';
+import { postDelClassHour, postGetClassHourList, postUpdateCurSession } from '@/services/classHoursApi/classHoursApi';
+import getUser from '@/utils/getUser';
 
 const { confirm } = Modal;
 
 
 const LearningTaskList: React.FC<unknown> = () => {
     const actionRef = useRef<ActionType>(null);
+    const [createModalVisible, handleModalVisible] = useState<boolean>(false);
 
+    const user = getUser();
+    
     const columns: ProColumns<ClassHoursApiInterface.ClassHour>[] = [
+        {
+            title: 'id',
+            dataIndex: 'id',
+            width: 30
+        },
         {
             title: '课时名',
             dataIndex: 'name',
@@ -29,13 +38,25 @@ const LearningTaskList: React.FC<unknown> = () => {
         },
         {
             title: '所属课堂',
-            dataIndex: 'lessonName'
+            dataIndex: 'lessonName',
+            render: (dom, entity) => {
+                console.log(entity)
+                return `${entity.lessonId}-${entity.lessonName}`;
+            }
+        },
+        {
+            title: '当前环节',
+            dataIndex: 'sessionName',
+            render: (dom, entity) => {
+                console.log(entity)
+                return `${entity.sessionId}-${entity.sessionName}`;
+            }
         },
         {
             title: '操作',
             dataIndex: 'option',
             valueType: 'option',
-            width: 140,
+            width: 230,
             render: (_, record) => (
                 <>
                     <a href={`/classHourDetail?id=${record.id}`}>
@@ -45,6 +66,38 @@ const LearningTaskList: React.FC<unknown> = () => {
                     <a href={`/classHourDetail?id=${record.id}&isEdit=1`}>
                         编辑
                     </a>
+                    <Divider type="vertical" />
+                    <Dropdown
+                        menu={{
+                            items: record.sessionList?.map((item) => ({
+                                ...item,
+                                label: `${item.id}-${item.name}`,
+                                key: `${item.id}-${item.name}`
+                            })),
+                            selectable: true,
+                            defaultSelectedKeys: [`${record.sessionId}-${record.sessionName}`],
+                            onSelect: async ({ key }) => {
+                                const [sessionId, sessionName] = key.split('-');
+                                const { code } = await postUpdateCurSession({
+                                    classHourId: record.id,
+                                    sessionId: Number(sessionId),
+                                    sessionName
+                                });
+                                if (isSuccessResponse(code)) {
+                                    message.success('切换成功');
+                                    actionRef.current?.reload();
+                                }
+                            }
+                        }}
+                    >
+                        <Typography.Link>
+                            <Space>
+                            切换环节
+                                <DownOutlined />
+                            </Space>
+                        </Typography.Link>
+                    </Dropdown>
+                    
                     <Divider type="vertical" />
                     <a
                         onClick={async () => {
@@ -118,6 +171,31 @@ const LearningTaskList: React.FC<unknown> = () => {
                     pageSize: 10
                 }}
             />
+            <Modal
+                destroyOnClose
+                title="切换环节"
+                width={420}
+                open={createModalVisible}
+                onCancel={() => handleModalVisible(false)}
+                footer={null}
+            >
+                
+                {/* <ProTable<LessonApiInterface.Lesson, LessonApiInterface.Lesson>
+                    onSubmit={async (value) => {
+                        console.log('value', value)
+                        const response = formType === FORM_TYPE.CREATE_FORM ? await postAddLesson(value) : await postUpdateLesson({ ...defaultFormValue, ...value });
+                        if (isSuccessResponse(response.code)) {
+                            handleModalVisible(false);
+                            message.success(formType === FORM_TYPE.CREATE_FORM ? '创建成功' : '更新成功');
+                            actionRef.current?.reload();
+                        }
+                    }}
+                    rowKey="id"
+                    type="form"
+                    form={{ initialValues: defaultFormValue }}
+                    columns={columns}
+                /> */}
+            </Modal>
         </PageContainer>
     );
 };

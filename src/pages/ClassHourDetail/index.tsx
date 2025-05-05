@@ -5,17 +5,19 @@ import {
     ProForm,
     ProFormInstance,
     ProFormList,
-    ProFormText,
-    ProFormTextArea
+    ProFormSelect,
+    ProFormText
 } from '@ant-design/pro-components';
 import { message, Modal } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { isSuccessResponse, noop } from '@/utils';
 
 
-import { postAddKnowledgePointTest, postGetKnowledgePointTestDetail, postUpdateKnowledgePointTest } from '@/services/knowledgePointTestApi/knowledgePointTestApi';
-
-const { confirm } = Modal;
+import { postGetKnowledgePointTestList } from '@/services/knowledgePointTestApi/knowledgePointTestApi';
+import { postGetLessonList } from '@/services/lessonApi/lessonApi';
+import { postGetLearningTaskList } from '@/services/learningTaskApi/learningTaskApi';
+import { postAddClassHour, postGetClassHourDetail, postUpdateClassHour } from '@/services/classHoursApi/classHoursApi';
+import getUser from '@/utils/getUser';
 
 const ClassHourDetail: React.FC<unknown> = () => {
     const formRef = useRef<ProFormInstance>(null);
@@ -26,6 +28,7 @@ const ClassHourDetail: React.FC<unknown> = () => {
     >();
     const [data, setData] = useState(null);
 
+    const user = getUser();
     const urlObject = new URL(location.href);
     const pageParams = new URLSearchParams(urlObject.search);
     const isAdd = !pageParams.get('id');
@@ -33,7 +36,7 @@ const ClassHourDetail: React.FC<unknown> = () => {
     const actionText = isAdd ? '创建' : (isEdit ? '编辑' : '详情');
     const disabled = !isAdd && !isEdit;
     const fetchData = async () => {
-        const { data, message: msg, code } = await postGetKnowledgePointTestDetail({
+        const { data, message: msg, code } = await postGetClassHourDetail({
             id: Number(pageParams.get('id')),
         });
         if (isSuccessResponse(code)) {
@@ -41,7 +44,21 @@ const ClassHourDetail: React.FC<unknown> = () => {
             setTimeout(() => {
                 formRef.current?.setFieldsValue({
                     ...data,
-                    ...data.questionInfo
+                    lessonId: {
+                        label: data.lessonName,
+                        value: data.lessonId
+                    },
+                    sessionList: data.sessionList.map((item) => ({
+                        name: item.name,
+                        knowledgePointTestId: {
+                            label: `${item.knowledgePointTestId}-${item.knowledgePointTestName}`,
+                            value: item.knowledgePointTestId
+                        },
+                        learningTaskId: {
+                            label: `${item.learningTaskId}-${item.learningTaskName}`,
+                            value: item.learningTaskId
+                        },
+                    }))
                 })
             });
             return noop;
@@ -69,7 +86,7 @@ const ClassHourDetail: React.FC<unknown> = () => {
             breadcrumb={{
                 items: [
                     {
-                        href: '/knowledgePointTestList',
+                        href: '/classHourList',
                         title: '课时列表'
                     },
                     {
@@ -100,13 +117,29 @@ const ClassHourDetail: React.FC<unknown> = () => {
                 }}
                 onFinish={async (formData: any) => {
                     console.log(formData);
-                    if (!formData.questionList?.length) {
-                        message.error('测试题不能为空');
+                    if (!formData.sessionList?.length) {
+                        message.error('请添加环节');
                         return;
                     }
                     if (isAdd) {
-                        const { message: msg, code } = await postAddKnowledgePointTest({
-                            ...formData
+                        const { message: msg, code } = await postAddClassHour({
+                            ...formData,
+                            lessonId: Number(formData.lessonId.split('-')[0]),
+                            lessonName: formData.lessonId.split('-')[1],
+                            sessionList:  formData.sessionList.map((item) => {
+
+                                return {
+                                    ...item,
+                                    ...({
+                                        knowledgePointTestId: Number(item.knowledgePointTestId.split('-')[0]),
+                                        knowledgePointTestName: item.knowledgePointTestId.split('-')[1],    
+                                    }),
+                                    ...({
+                                        learningTaskId: Number(item.learningTaskId.split('-')[0]),
+                                        learningTaskName: item.learningTaskId.split('-')[1],
+                                    })
+                                }
+                            })
                         });
                         if (isSuccessResponse(code)) {
                             message.success('知识点测试创建成功');
@@ -115,9 +148,34 @@ const ClassHourDetail: React.FC<unknown> = () => {
                         }
                         message.error(msg);
                     } else if (isEdit) {
-                        const { message: msg, code } = await postUpdateKnowledgePointTest({
+                        const { message: msg, code } = await postUpdateClassHour({
                             id: Number(pageParams.get('id')),
-                            ...formData
+                            ...data,
+                            ...formData,
+                            lessonId: formData.lessonId.value,
+                            lessonName: formData.lessonId.label,
+                            sessionList: formData.sessionList.map((item) => {
+                                // if (item.knowledgePointTestId.label) {
+                                    
+                                // }
+                                return {
+                                    ...item,
+                                    ...(item.knowledgePointTestId.label ? {
+                                        knowledgePointTestId: item.knowledgePointTestId.value,
+                                        knowledgePointTestName: item.knowledgePointTestId.label.split('-')[1],    
+                                    } : {
+                                        knowledgePointTestId: item.knowledgePointTestId.split('-')[0],
+                                        knowledgePointTestName: item.knowledgePointTestId.split('-')[1],
+                                    }),
+                                    ...(item.learningTaskId.label ? {
+                                        learningTaskId: item.learningTaskId.value,
+                                        learningTaskName: item.learningTaskId.label.split('-')[1]    
+                                    } : {
+                                        learningTaskId: item.learningTaskId.split('-')[0],
+                                        learningTaskName: item.learningTaskId.split('-')[1],
+                                    }),
+                                }
+                            })
                         });
                         if (isSuccessResponse(code)) {
                             message.success('知识点测试更新成功');
@@ -129,25 +187,34 @@ const ClassHourDetail: React.FC<unknown> = () => {
                 }}
             >
                 <ProFormText
-                    name="knowledgePoint"
-                    label="知识点"
+                    name="name"
+                    label="课时名"
                     placeholder="请输入知识点"
                     required
                     rules={[{ required: true }]}
                 />
-                <ProFormTextArea
-                    name="introduction"
-                    label="引言"
-                    placeholder="请输入引言"
-                    required
+                <ProFormSelect
+                    name="lessonId"
+                    label="课堂"
+                    placeholder="请选择课堂"
+                    request={async () => {
+                        const { code, data } = await postGetLessonList();
+                        if (isSuccessResponse(code)) {
+                            return data.list.map((item) => ({
+                                label: `${item.name}`,
+                                value: `${item.id}-${item.name}`
+                            }));
+                        }
+                        return [];
+                    }}
                     rules={[{ required: true }]}
                 />
                 <ProFormList
-                    name="questionList"
-                    label="测试题"
+                    name="sessionList"
+                    label="环节"
                     actionRef={actionRef}
                     fieldExtraRender={() => null}
-                    creatorButtonProps={{ creatorButtonText: '新增测试题' }}
+                    creatorButtonProps={{ creatorButtonText: '新增环节' }}
                     itemRender={({ action }, listData) => {
                         const { record, index } = listData;
                         console.log({ record, index })
@@ -155,30 +222,47 @@ const ClassHourDetail: React.FC<unknown> = () => {
                             <ProCard
                                 bordered
                                 style={{ marginBlockEnd: 8 }}
-                                title={`测试${index + 1}`}
+                                title={`环节${index + 1}`}
                                 extra={action}
                                 bodyStyle={{ paddingBlockEnd: 0 }}
                             >
                                 <ProFormText
-                                    name="question"
-                                    label="题目"
-                                    placeholder="请输入题目"
+                                    name="name"
+                                    label="环节名"
+                                    placeholder="请输入环节名"
                                     required
                                     rules={[{ required: true }]}
                                 />
-                                <ProFormText
-                                    name="options"
-                                    label="答案选项"
-                                    placeholder="请输入答案选项"
-                                    tooltip="选项（_分隔）"
-                                    required
+                                <ProFormSelect
+                                    name="learningTaskId"
+                                    label="学习任务单"
+                                    placeholder="请选择学习任务单"
+                                    request={async () => {
+                                        const { code, data } = await postGetLearningTaskList();
+                                        if (isSuccessResponse(code)) {
+                                            return data.list.map((item) => ({
+                                                label: `【${item.id}】${item.knowledgePoint}-${item.introduction.length > 20 ? item.introduction.slice(0, 20) + '...' : item.introduction}`,
+                                                value: `${item.id}-${item.knowledgePoint}`
+                                            }));
+                                        }
+                                        return [];
+                                    }}
                                     rules={[{ required: true }]}
                                 />
-                                <ProFormText
-                                    name="answer"
-                                    label="答案"
-                                    placeholder="请输入答案"
-                                    required
+                                <ProFormSelect
+                                    name="knowledgePointTestId"
+                                    label="知识点小测"
+                                    placeholder="请选择知识点小测"
+                                    request={async () => {
+                                        const { code, data } = await postGetKnowledgePointTestList();
+                                        if (isSuccessResponse(code)) {
+                                            return data.list.map((item) => ({
+                                                label: `【${item.id}】${item.knowledgePoint}-${item.introduction.length > 20 ? item.introduction.slice(0, 20) + '...' : item.introduction}`,
+                                                value: `${item.id}-${item.knowledgePoint}`
+                                            }));
+                                        }
+                                        return [];
+                                    }}
                                     rules={[{ required: true }]}
                                 />
                             </ProCard>
@@ -186,6 +270,21 @@ const ClassHourDetail: React.FC<unknown> = () => {
                     }}
                 >
                 </ProFormList>
+                {/* <ProFormSelect
+                    name="curSession"
+                    label="当前环节"
+                    placeholder="请选择当前环节"
+                    request={async () => {
+                        const { code, data } = await postGetLessonList();
+                        if (isSuccessResponse(code)) {
+                            return data.list.map((item) => ({
+                                label: `${item.name}`,
+                                value: `${item.id}-${item.name}`
+                            }));
+                        }
+                        return [];
+                    }}
+                /> */}
             </ProForm>
         </PageContainer>
     );

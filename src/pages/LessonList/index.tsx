@@ -10,6 +10,8 @@ import React, { useRef, useState } from 'react';
 import { isSuccessResponse } from '@/utils';
 import { postUpdateLesson } from '@/services/lessonApi/lessonApi';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import getUser from '@/utils/getUser';
+import { useModel } from '@umijs/max';
 
 const { confirm } = Modal;
 
@@ -26,6 +28,7 @@ const TableList: React.FC<unknown> = () => {
     const actionRef = useRef<ActionType>(null);
     const [formType, setFormType] = useState<FORM_TYPE>(FORM_TYPE.CREATE_FORM);
     const [defaultFormValue, setDefaultFormValue] = useState<Partial<LessonApiInterface.Lesson>>({});
+    const user = getUser();
 
     const columns: ProDescriptionsItemProps<LessonApiInterface.Lesson>[] = [
         {

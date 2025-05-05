@@ -5,11 +5,14 @@ import {
     ProDescriptionsItemProps,
     ProTable,
 } from '@ant-design/pro-components';
-import { Button, Divider, message, Modal } from 'antd';
-import React, { useRef, useState } from 'react';
+import { Button, Divider, Dropdown, message, Modal, Space, Typography } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import { isSuccessResponse } from '@/utils';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { DownOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { useParams } from '@umijs/max';
+import getUser from '@/utils/getUser';
+import { postGetClassHourList } from '@/services/classHoursApi/classHoursApi';
+import { postUpdateClassHourInfo } from '@/services/lessonApi/lessonApi';
 
 const { confirm } = Modal;
 
@@ -20,8 +23,36 @@ const LessonDetail: React.FC<unknown> = () => {
     const [createModalVisible, handleModalVisible] = useState<boolean>(false);
     const actionRef = useRef<ActionType>(null);
     const pageParams = useParams();
+    const [menuList, setMenuList] = useState([]);
+    const [classHourBySelected, setClassHourBySelected] = useState('');
+    const user = getUser();
+
+    const fetchData = async () => {
+        const { code, data } = await postGetClassHourList({
+            lessonId: Number(pageParams.id)
+        });
+        if (isSuccessResponse(code)) {
+            setMenuList(data.list.map((item) => ({
+                ...item,
+                key: `${item.id}-${item.name}`,
+                label: `${item.id}-${item.name}`,
+            })));
+        }
+        
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const columns: ProDescriptionsItemProps<LessonApiInterface.ClassMembers>[] = [
+        {
+            title: 'id',
+            dataIndex: 'id',
+            formItemProps: {
+                hidden: true
+            },
+        },
         {
             title: '学号',
             dataIndex: 'memberNo',
@@ -89,6 +120,39 @@ const LessonDetail: React.FC<unknown> = () => {
                 ]
             }}
         >
+            <div style={{
+                marginBottom: '20px',
+                fontSize: '16px'
+            }}>
+                当前课时：
+                <Dropdown
+                    menu={{
+                        items: menuList,
+                        selectable: true,
+                        onSelect: async ({ key }) => {
+                            const [activedClassHourId, activedClassHourName] = key.split('-');
+                            const { code } = await postUpdateClassHourInfo({
+                                activedClassHourId: Number(activedClassHourId),
+                                activedClassHourName,
+                                lessonId: Number(pageParams.id)
+                            });
+                            if (isSuccessResponse(code)) {
+                                message.success('更新成功');
+                                setClassHourBySelected(key);
+                            } else {
+                                message.error('更新失败，请刷新重试');
+                            }
+                        }
+                    }}
+                >
+                    <Typography.Link>
+                        <Space>
+                            { classHourBySelected || '请选择课时' }
+                            <DownOutlined />
+                        </Space>
+                    </Typography.Link>
+                </Dropdown>
+            </div>
             <ProTable<LessonApiInterface.ClassMembers>
                 headerTitle="课堂成员"
                 actionRef={actionRef}
@@ -112,6 +176,10 @@ const LessonDetail: React.FC<unknown> = () => {
                     const { data, message: msg, code } = await postGetLessonDetail({ id });
                     
                     if (isSuccessResponse(code)) {
+                        const { activedClassHourId, activedClassHourName } = data;
+                        if (activedClassHourId > 0) {
+                            setClassHourBySelected(`${activedClassHourId}-${activedClassHourName}`);
+                        }
                         return {
                             data: data.classMemberList || []
                         };

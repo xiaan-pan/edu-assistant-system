@@ -13,14 +13,21 @@ import React, { useRef, useState } from 'react';
 import { isSuccessResponse } from '@/utils';
 import { postDelKnowledgePointTest, postGetKnowledgePointTestList } from '@/services/knowledgePointTestApi/knowledgePointTestApi';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import getUser from '@/utils/getUser';
 
 const { confirm } = Modal;
 
 
 const LearningTaskList: React.FC<unknown> = () => {
     const actionRef = useRef<ActionType>(null);
+    const user = getUser();
 
     const columns: ProColumns<KnowledgePointTestApiInterface.KnowledgePointTest>[] = [
+        {
+            title: 'id',
+            dataIndex: 'id',
+            width: 30
+        },
         {
             title: '知识点',
             dataIndex: 'knowledgePoint',

@@ -146,3 +146,24 @@ export async function postUpdateLesson(
     },
   );
 }
+
+export async function postUpdateClassHourInfo (
+  body: {
+    lessonId: number;
+    activedClassHourId: number;
+    activedClassHourName: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<LessonApiInterface.CommonResponse>(
+    '/api/lesson/updateClassHour',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    },
+  );
+}

@@ -14,6 +14,7 @@ import { isSuccessResponse, noop } from '@/utils';
 
 
 import { postAddKnowledgePointTest, postGetKnowledgePointTestDetail, postUpdateKnowledgePointTest } from '@/services/knowledgePointTestApi/knowledgePointTestApi';
+import getUser from '@/utils/getUser';
 
 const { confirm } = Modal;
 
@@ -26,6 +27,8 @@ const LearningTaskDetail: React.FC<unknown> = () => {
     >();
     const [data, setData] = useState(null);
 
+    const user = getUser();
+    
     const urlObject = new URL(location.href);
     const pageParams = new URLSearchParams(urlObject.search);
     const isAdd = !pageParams.get('id');

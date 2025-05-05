@@ -80,7 +80,7 @@ export async function postGetClassHourDetail(
 /** getClassHourList POST /api/classHours/getClassHourList */
 export async function postGetClassHourList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: ClassHoursApiInterface.postGetClassHourListParams,
+  // params: ClassHoursApiInterface.postGetClassHourListParams,
   body: {
     current: number;
     pageSize: number;
@@ -106,9 +106,9 @@ export async function postGetClassHourList(
     headers: {
       'Content-Type': 'application/json',
     },
-    params: {
-      ...params,
-    },
+    // params: {
+    //   ...params,
+    // },
     data: body,
     ...(options || {}),
   });
@@ -134,6 +134,27 @@ export async function postUpdateClassHour(
 ) {
   return request<{ code: number; message: string }>(
     '/api/classHours/updateClassHour',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    },
+  );
+}
+
+export async function postUpdateCurSession(
+  body: {
+    classHourId: number;
+    sessionId: number;
+    sessionName: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<{ code: number; message: string }>(
+    '/api/classHours/updateCurSession',
     {
       method: 'POST',
       headers: {
