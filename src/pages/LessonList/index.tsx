@@ -179,6 +179,7 @@ const TableList: React.FC<unknown> = () => {
                 <ProTable<LessonApiInterface.Lesson, LessonApiInterface.Lesson>
                     onSubmit={async (value) => {
                         console.log('value', value)
+                        value.owner = value.owner || user.username;
                         const response = formType === FORM_TYPE.CREATE_FORM ? await postAddLesson(value) : await postUpdateLesson({ ...defaultFormValue, ...value });
                         if (isSuccessResponse(response.code)) {
                             handleModalVisible(false);

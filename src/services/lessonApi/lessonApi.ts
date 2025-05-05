@@ -167,3 +167,24 @@ export async function postUpdateClassHourInfo (
     },
   );
 }
+
+export async function postGenerateUsers (
+  body: {
+    count: number;
+    start: number;
+    prefix: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<LessonApiInterface.CommonResponse>(
+    '/api/user/generateUsers',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    },
+  );
+}

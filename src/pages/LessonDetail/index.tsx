@@ -3,6 +3,10 @@ import {
     ActionType,
     PageContainer,
     ProDescriptionsItemProps,
+    ProForm,
+    ProFormDigit,
+    ProFormInstance,
+    ProFormText,
     ProTable,
 } from '@ant-design/pro-components';
 import { Button, Divider, Dropdown, message, Modal, Space, Typography } from 'antd';
@@ -12,7 +16,7 @@ import { DownOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { useParams } from '@umijs/max';
 import getUser from '@/utils/getUser';
 import { postGetClassHourList } from '@/services/classHoursApi/classHoursApi';
-import { postUpdateClassHourInfo } from '@/services/lessonApi/lessonApi';
+import { postGenerateUsers, postUpdateClassHourInfo } from '@/services/lessonApi/lessonApi';
 
 const { confirm } = Modal;
 
@@ -21,7 +25,9 @@ const { postGetLessonDetail, postDelLessonMembers, postAddLessonMembers } =
 
 const LessonDetail: React.FC<unknown> = () => {
     const [createModalVisible, handleModalVisible] = useState<boolean>(false);
+    const [modalType, setModalType] = useState<'single' | 'multiple'>('single')
     const actionRef = useRef<ActionType>(null);
+    const formRef = useRef<ProFormInstance>(null);
     const pageParams = useParams();
     const [menuList, setMenuList] = useState([]);
     const [classHourBySelected, setClassHourBySelected] = useState('');
@@ -165,10 +171,28 @@ const LessonDetail: React.FC<unknown> = () => {
                         key="1"
                         type="primary"
                         onClick={() => {
+                            setModalType('single');
                             handleModalVisible(true);
                         }}
                     >
-                        新建
+                        新增单个成员
+                    </Button>,
+                    <Button
+                        key="1"
+                        type="primary"
+                        onClick={() => {
+                            setModalType('multiple');
+                            handleModalVisible(true);
+                            setTimeout(() => {
+                                formRef.current?.setFieldsValue({
+                                    "count": 1,
+                                    "prefix": "",
+                                    "start": 1
+                                })
+                            }, 100);
+                        }}
+                    >
+                        批量新增成员
                     </Button>,
                 ]}
                 request={async () => {
@@ -203,26 +227,62 @@ const LessonDetail: React.FC<unknown> = () => {
             /> 
             <Modal
                   destroyOnClose
-                  title="新建"
+                  title="新增成员"
                   width={420}
                   open={createModalVisible}
                   onCancel={() => handleModalVisible(false)}
                   footer={null}
             >
-                <ProTable<LessonApiInterface.Lesson, LessonApiInterface.ClassMembers>
-                    onSubmit={async (value) => {
-                        console.log('value', value)
-                        const response = await postAddLessonMembers({ id: Number(pageParams.id), memberList: [value.memberNo] });
-                        if (isSuccessResponse(response.code)) {
-                            handleModalVisible(false);
-                            message.success('创建成功');
-                            actionRef.current?.reload();
-                        }
-                    }}
-                    rowKey="id"
-                    type="form"
-                    columns={columns}
-                />
+                {modalType === 'single' && (
+                    <ProTable<LessonApiInterface.Lesson, LessonApiInterface.ClassMembers>
+                        onSubmit={async (value) => {
+                            console.log('value', value)
+                            const response = await postAddLessonMembers({ id: Number(pageParams.id), memberList: [value.memberNo] });
+                            if (isSuccessResponse(response.code)) {
+                                handleModalVisible(false);
+                                message.success('创建成功');
+                                actionRef.current?.reload();
+                            }
+                        }}
+                        rowKey="id"
+                        type="form"
+                        columns={columns}
+                    />
+                )}
+                {modalType === 'multiple' && (
+                    <ProForm
+                        formRef={formRef}
+                        onFinish={async (formData: any) => {
+                            console.log(formData)
+                            const { code, message: msg } = await postGenerateUsers({
+                                ...formData,
+                                id: Number(pageParams.id)
+                            });
+                            if (isSuccessResponse(code)) {
+                                message.success(msg);
+                                handleModalVisible(false);
+                                actionRef.current?.reload();
+                            }
+                        }}
+                    >
+                        <ProFormText
+                            name="prefix"
+                            label="前缀："
+                            placeholder={`请输入前缀`}
+                            rules={[{ required: false }]}
+                        />
+                        <ProFormDigit
+                            label="开始序号："
+                            name="start"
+                            min={1}
+                        />
+                        <ProFormDigit
+                            label="新增个数："
+                            name="count"
+                            min={1}
+                        />
+                    </ProForm>
+                )}
             </Modal>
         </PageContainer>
     );

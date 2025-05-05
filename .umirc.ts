@@ -9,6 +9,7 @@ export default defineConfig({
     layout: {
         title: '@umijs/max',
     },
+    base: '',
     routes: [
         {
             path: '/',

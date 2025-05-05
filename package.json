@@ -2,6 +2,7 @@
   "name": "edu-assistant-system",
   "private": true,
   "author": "xiaan.pan <xiaan.pan@qunar.com>",
+  "homepage": ".",
   "scripts": {
     "build": "max build",
     "dev": "max dev",

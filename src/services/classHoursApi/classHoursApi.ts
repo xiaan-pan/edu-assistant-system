@@ -120,7 +120,7 @@ export async function postUpdateClassHour(
     id: number;
     name: string;
     lessonId: number;
-    /** 没有开启对环节则为 -1 */
+    /** 没有开启对活动则为 -1 */
     sessionId: number;
     sessionList: {
       id: number;

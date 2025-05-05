@@ -118,7 +118,7 @@ const ClassHourDetail: React.FC<unknown> = () => {
                 onFinish={async (formData: any) => {
                     console.log(formData);
                     if (!formData.sessionList?.length) {
-                        message.error('请添加环节');
+                        message.error('请添加活动');
                         return;
                     }
                     if (isAdd) {
@@ -211,10 +211,10 @@ const ClassHourDetail: React.FC<unknown> = () => {
                 />
                 <ProFormList
                     name="sessionList"
-                    label="环节"
+                    label="活动"
                     actionRef={actionRef}
                     fieldExtraRender={() => null}
-                    creatorButtonProps={{ creatorButtonText: '新增环节' }}
+                    creatorButtonProps={{ creatorButtonText: '新增活动' }}
                     itemRender={({ action }, listData) => {
                         const { record, index } = listData;
                         console.log({ record, index })
@@ -222,14 +222,14 @@ const ClassHourDetail: React.FC<unknown> = () => {
                             <ProCard
                                 bordered
                                 style={{ marginBlockEnd: 8 }}
-                                title={`环节${index + 1}`}
+                                title={`活动${index + 1}`}
                                 extra={action}
                                 bodyStyle={{ paddingBlockEnd: 0 }}
                             >
                                 <ProFormText
                                     name="name"
-                                    label="环节名"
-                                    placeholder="请输入环节名"
+                                    label="活动名"
+                                    placeholder="请输入活动名"
                                     required
                                     rules={[{ required: true }]}
                                 />
@@ -272,8 +272,8 @@ const ClassHourDetail: React.FC<unknown> = () => {
                 </ProFormList>
                 {/* <ProFormSelect
                     name="curSession"
-                    label="当前环节"
-                    placeholder="请选择当前环节"
+                    label="当前活动"
+                    placeholder="请选择当前活动"
                     request={async () => {
                         const { code, data } = await postGetLessonList();
                         if (isSuccessResponse(code)) {

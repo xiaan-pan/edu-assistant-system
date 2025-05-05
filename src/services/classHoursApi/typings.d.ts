@@ -8,9 +8,9 @@ declare namespace ClassHoursApiInterface {
     lessonId: number;
     /** 课堂名称 */
     lessonName: string;
-    /** 当前所处的环节id 没有开启对环节则为 -1 */
+    /** 当前所处的活动id 没有开启对活动则为 -1 */
     sessionId: number;
-    /** 当前所处的环节名称 没有开启对环节则为空 */
+    /** 当前所处的活动名称 没有开启对活动则为空 */
     sessionName: string;
   };
 
@@ -19,7 +19,7 @@ declare namespace ClassHoursApiInterface {
     id: number;
     /** 课时id */
     classHourId: number;
-    /** 环节名称 */
+    /** 活动名称 */
     name: string;
     /** 学习任务单id */
     learningTaskId?: number;

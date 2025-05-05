@@ -109,6 +109,7 @@ const LearningTaskDetail: React.FC<unknown> = () => {
                     });
                     if (isSuccessResponse(code)) {
                         message.success(msg);
+                        location.reload();
                     }
                 }}
             >

@@ -45,7 +45,7 @@ const LearningTaskList: React.FC<unknown> = () => {
             }
         },
         {
-            title: '当前环节',
+            title: '当前活动',
             dataIndex: 'sessionName',
             render: (dom, entity) => {
                 console.log(entity)
@@ -92,7 +92,7 @@ const LearningTaskList: React.FC<unknown> = () => {
                     >
                         <Typography.Link>
                             <Space>
-                            切换环节
+                            切换活动
                                 <DownOutlined />
                             </Space>
                         </Typography.Link>
@@ -173,7 +173,7 @@ const LearningTaskList: React.FC<unknown> = () => {
             />
             <Modal
                 destroyOnClose
-                title="切换环节"
+                title="切换活动"
                 width={420}
                 open={createModalVisible}
                 onCancel={() => handleModalVisible(false)}
